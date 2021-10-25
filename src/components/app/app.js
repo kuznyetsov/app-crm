@@ -12,9 +12,9 @@ class App extends Component{
         super(props);
         this.state = {
             data: [
-                {name: 'John C.', salary: 800, increase: false, id: 1} ,
-                {name: 'Alex M.', salary: 3000, increase: false, id: 2} ,
-                {name: 'Carl W.', salary: 5000, increase: false, id: 3} ,
+                {name: 'John C.', salary: 800, increase: true, id: 1, rise: false} ,
+                {name: 'Alex M.', salary: 3000, increase: false, id: 2, rise: false} ,
+                {name: 'Carl W.', salary: 5000, increase: false, id: 3, rise: true} ,
             ]
 
         };
@@ -35,6 +35,7 @@ class App extends Component{
                 name,
                 salary,
                 increase: false,
+                rise: false,
                 id: this.maxId++
             }
             const newArr = [...data, newItem]
@@ -44,10 +45,25 @@ class App extends Component{
         })
     }
 
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if(item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }))
+    }
+
+
     render() {
+        const employees = this.state.data.length;
+        const employeesIncr = this.state.data.filter(item => item.increase).length;
         return (
             <div className="app">
-                <AppInfo/>
+                <AppInfo employees={employees}
+                         employeesIncr={employeesIncr}/>
 
                 <div className='search-panel'>
                     <SearchPanel/>
@@ -55,7 +71,8 @@ class App extends Component{
 
                 </div>
                 <EmployersList data={this.state.data}
-                                onDelete={this.deleteItem}
+                               onDelete={this.deleteItem}
+                               onToggleProp={this.onToggleProp}
                                 />
                 <EmployersAddForm onAdd={this.addItem}/>
             </div>
